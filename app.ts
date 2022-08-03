@@ -1,8 +1,10 @@
 import dotenv = require('dotenv')
 import express from 'express'
 import userRoutes from './app/routes/userRoutes'
+import authRoutes from './app/routes/authRoutes'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
+
 const app = express()
 dotenv.config()
 const port = process.env.PORT
@@ -11,10 +13,12 @@ const dbURI = `mongodb+srv://${process.env.MONGODB_USER_LOGIN}:${process.env.MON
 ;(async () => {
     try {
         await mongoose.connect(dbURI, {})
+        //await User.deleteMany({})
         app.listen(port, () => console.log(`Listening on port ${port}`))
         app.use(bodyParser.json())
         app.use(bodyParser.urlencoded({ extended: true }))
         app.use('/user', userRoutes)
+        app.use('/auth/', authRoutes)
     } catch (error) {
         console.log(error)
     }

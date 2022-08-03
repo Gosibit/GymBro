@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose'
+import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
 import { validate as emailValidator } from 'email-validator'
 
@@ -6,7 +6,10 @@ const userSchema = new mongoose.Schema({
     login: {
         type: String,
         required: true,
-        unique: true,
+        //  unique: true,
+        trim: true,
+        minLength: 3,
+        maxLength: 30,
     },
     email: {
         type: String,
@@ -19,18 +22,24 @@ const userSchema = new mongoose.Schema({
         required: true,
         match: new RegExp(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[a-zA-Z0-9!@$!%*?&]/), //at least:1 small, 1 big character, 1 special character and 1 number
         minLength: 8,
-        maxLength: 25,
+        maxLength: 30,
         select: false,
+    },
+    confirmed: {
+        type: Boolean,
+        requried: true,
     },
     firstName: {
         type: String,
         required: true,
+        trim: true,
         minLength: 3,
         maxLength: 30,
     },
     lastName: {
         type: String,
         required: true,
+        trim: true,
         minLength: 3,
         maxLength: 30,
     },
