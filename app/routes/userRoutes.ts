@@ -9,5 +9,7 @@ router.use((req: any, res: any, next: any) => {
 })
 
 router.post('/register', userController.register)
+router.post('/login', userController.login)
+router.post('/resend-verify-email', userController.resendVerifyEmail)
 
 export default router

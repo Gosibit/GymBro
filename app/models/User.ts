@@ -1,9 +1,17 @@
-import mongoose from 'mongoose'
+import mongoose, { Schema, Document, Model } from 'mongoose'
 import bcrypt from 'bcrypt'
 import { validate as emailValidator } from 'email-validator'
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
     login: {
+        type: String,
+        required: true,
+        //  unique: true,
+        trim: true,
+        minLength: 3,
+        maxLength: 30,
+    },
+    username: {
         type: String,
         required: true,
         //  unique: true,
@@ -55,9 +63,10 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, salt)
     return next()
 })
-userSchema.methods.validatePassword = async function validatePassword(data: string) {
-    return bcrypt.compare(data, this.password)
-}
+userSchema.method('validatePassword', async function validatePassword(data: string) {
+    const user: any = await User.findOne({ username: this.username }).select('password')
+    return bcrypt.compare(data, user.password)
+})
 
 const User = mongoose.model('User', userSchema)
 
