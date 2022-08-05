@@ -1,19 +1,8 @@
 import User from '../models/User'
-import authController from './AuthController'
+import AuthController from './AuthController'
 import express from 'express'
 import jwt from 'jsonwebtoken'
-interface IUser {
-    login: string
-    email: string
-    password: string
-    confirmed: Boolean
-    firstName: string
-    lastName: string
-}
 
-interface IUserMethods {
-    validatePassword(password: string): Promise<Boolean>
-}
 class UserController {
     public async register(req: express.Request, res: express.Response) {
         try {
@@ -28,7 +17,7 @@ class UserController {
                 confirmed: false,
             })
 
-            authController.send_verify_email(user.toJSON())
+            AuthController.sendVerifyEmail(user)
 
             return res.status(201).json({
                 message: 'User successfully created',
@@ -43,14 +32,14 @@ class UserController {
     }
     public async login(req: express.Request, res: express.Response) {
         try {
-            const user: any = await User.findOne({ login: req.body.login }).orFail()
+            const user = await User.findOne({ login: req.body.login }).orFail()
             const validate = await user.validatePassword(req.body.password)
-            if (!validate) throw Error()
+            if (!validate) throw Error('Wrong password')
             if (!user.confirmed)
                 return res.status(401).json({
                     message: 'Email not verified',
                 })
-
+            const authController = new AuthController()
             const accessToken = authController.createAccessToken(user)
             return res.status(200).json({
                 message: 'User successfully logged in',
@@ -62,12 +51,6 @@ class UserController {
                 message: 'There was an error while logging in',
             })
         }
-    }
-    public resendVerifyEmail(req: express.Request, res: express.Response) {
-        authController.resend_verify_email(req.body.email)
-        return res.status(200).json({
-            message: 'Email resent if needed',
-        })
     }
 }
 export default new UserController()

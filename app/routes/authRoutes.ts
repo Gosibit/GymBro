@@ -1,14 +1,11 @@
 import express from 'express'
-import authController from '../controllers/AuthController'
+import AuthController from '../controllers/AuthController'
 
 const router = express.Router()
-
-router.use((req: any, res: any, next: any) => {
-    console.log('xd')
-    console.log(`${req.url}:  ${Date.now()}`)
-    next()
-})
-
+const authController = new AuthController()
 router.get('/confirmation/:token', authController.verifyEmail)
+router.post('/reset-password-request', authController.resetPasswordRequest)
+router.post('/resend-verify-email', authController.resendVerifyEmail)
+router.post('/reset-password', authController.resetPassword)
 
 export default router

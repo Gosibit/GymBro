@@ -2,7 +2,20 @@ import mongoose, { Schema, Document, Model } from 'mongoose'
 import bcrypt from 'bcrypt'
 import { validate as emailValidator } from 'email-validator'
 
-const userSchema = new Schema({
+export interface IUser extends Document {
+    login: string
+    name: string
+    email: string
+    username: string
+    firstName: string
+    lastName: string
+    password: string
+    confirmed: boolean
+    passwordChangedDate: Number
+    validatePassword(data: string): Promise<Boolean>
+}
+
+const userSchema = new Schema<IUser>({
     login: {
         type: String,
         required: true,
@@ -32,6 +45,9 @@ const userSchema = new Schema({
         minLength: 8,
         maxLength: 30,
         select: false,
+    },
+    passwordChangedDate: {
+        type: Number,
     },
     confirmed: {
         type: Boolean,
@@ -64,10 +80,10 @@ userSchema.pre('save', async function (next) {
     return next()
 })
 userSchema.method('validatePassword', async function validatePassword(data: string) {
-    const user: any = await User.findOne({ username: this.username }).select('password')
+    const user: IUser = await User.findOne({ username: this.username }).select('password').orFail()
     return bcrypt.compare(data, user.password)
 })
 
-const User = mongoose.model('User', userSchema)
+const User = mongoose.model<IUser>('User', userSchema)
 
 export default User
