@@ -16,7 +16,7 @@ const Authenticate = function (
         const user = await User.findById(payload._id).orFail()
         if (user.passwordChangedDate > payload.iat * 1000)
             return res.status(401).json('Token expired')
-        req.body = User
+        req.user = user
         next()
     })
 }

@@ -12,7 +12,7 @@ export interface IUser extends Document {
     password: string
     confirmed: boolean
     passwordChangedDate: Number
-    validatePassword(data: string): Promise<Boolean>
+    validatePassword(password: string): Promise<Boolean>
 }
 
 const userSchema = new Schema<IUser>({
@@ -79,9 +79,9 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, salt)
     return next()
 })
-userSchema.method('validatePassword', async function validatePassword(data: string) {
-    const user: IUser = await User.findOne({ username: this.username }).select('password').orFail()
-    return bcrypt.compare(data, user.password)
+userSchema.method('validatePassword', async function validatePassword(password: string) {
+    const user: IUser = await User.findOne({ login: this.login }).select('password').orFail()
+    return bcrypt.compare(password, user.password)
 })
 
 const User = mongoose.model<IUser>('User', userSchema)
