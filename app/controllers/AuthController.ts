@@ -4,8 +4,7 @@ import User, { IUser } from '../models/User'
 import express from 'express'
 class AuthController {
     static sendVerifyEmail(user: IUser) {
-        const { EMAIL_HOST, EMAIL_USERNAME, EMAIL_PASSWORD, EMAIL_SECRET, ADDRESS, PORT } =
-            process.env
+        const { EMAIL_HOST, EMAIL_USERNAME, EMAIL_PASSWORD, EMAIL_SECRET, ADDRESS } = process.env
         if (!EMAIL_SECRET) throw Error('NO EMAIL SECRET')
 
         let transporter = nodemailer.createTransport({
@@ -23,7 +22,7 @@ class AuthController {
             EMAIL_SECRET,
             { expiresIn: '1d' },
             async (err, emailToken) => {
-                const url = `${ADDRESS}:${PORT}/auth/confirmation/${emailToken}`
+                const url = `${ADDRESS}/auth/confirmation/${emailToken}`
                 transporter.sendMail({
                     to: user.email,
                     from: `GymBro <${EMAIL_USERNAME}>`,
@@ -77,14 +76,8 @@ class AuthController {
             if (!req.body.email) throw Error()
 
             const user = await User.findOne({ email: req.body.email }).orFail()
-            const {
-                EMAIL_HOST,
-                EMAIL_USERNAME,
-                EMAIL_PASSWORD,
-                CHANGE_PASSWORD_SECRET,
-                ADDRESS,
-                PORT,
-            } = process.env
+            const { EMAIL_HOST, EMAIL_USERNAME, EMAIL_PASSWORD, CHANGE_PASSWORD_SECRET, ADDRESS } =
+                process.env
             if (!CHANGE_PASSWORD_SECRET) throw Error('NO CHANGE PASSWORD SECRET')
 
             let transporter = nodemailer.createTransport({
@@ -101,7 +94,7 @@ class AuthController {
                 CHANGE_PASSWORD_SECRET,
                 { expiresIn: '1d' },
                 async (err, changePasswordToken) => {
-                    const url = `${ADDRESS}:${PORT}/auth/change-password/${changePasswordToken}` //its gonna be FE address
+                    const url = `${ADDRESS}/auth/change-password/${changePasswordToken}` //its gonna be FE address
                     transporter.sendMail({
                         to: user.email,
                         from: `GymBro <${EMAIL_USERNAME}>`,
@@ -130,7 +123,7 @@ class AuthController {
             user.password = req.body.password
             user.passwordChangedDate = Date.now()
             await user.save()
-            return res.status(200).json({ message: 'Password changed successfully' })
+            return res.status(200).json('Password changed successfully')
         } catch (error) {
             console.log(error)
             return res.status(422).json({

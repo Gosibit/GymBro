@@ -2,6 +2,7 @@ import dotenv = require('dotenv')
 import express from 'express'
 import userRoutes from './app/routes/userRoutes'
 import authRoutes from './app/routes/authRoutes'
+import productRoutes from './app/routes/productRoutes'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import User from './app/models/User'
@@ -19,10 +20,12 @@ const dbURI = `mongodb+srv://${process.env.MONGODB_USER_LOGIN}:${process.env.MON
             console.log(req.url)
             next()
         })
+        app.use('/public', express.static(__dirname + '/public'))
         app.use(bodyParser.json())
         app.use(bodyParser.urlencoded({ extended: true }))
         app.use('/user', userRoutes)
         app.use('/auth/', authRoutes)
+        app.use('/product/', productRoutes)
     } catch (error) {
         console.log(error)
     }
