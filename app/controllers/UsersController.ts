@@ -1,9 +1,8 @@
 import User from '../models/User'
 import AuthController from './AuthController'
 import express from 'express'
-import jwt from 'jsonwebtoken'
 
-class UserController {
+class UsersController {
     public async register(req: express.Request, res: express.Response) {
         try {
             const { login, username, email, password, firstName, lastName } = req.body
@@ -53,4 +52,4 @@ class UserController {
         }
     }
 }
-export default UserController
+export default UsersController

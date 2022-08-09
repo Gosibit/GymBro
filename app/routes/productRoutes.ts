@@ -1,8 +1,10 @@
 import express from 'express'
-import ProductController from '../controllers/ProductController'
+import ProductsController from '../controllers/ProductsController'
 import multer from 'multer'
+import Authentication from '../middleware/Authenticate'
+import Admin from '../middleware/Admin'
 
-const productController = new ProductController()
+const productController = new ProductsController()
 const router = express.Router()
 
 const upload = multer({
@@ -17,6 +19,10 @@ const upload = multer({
     },
 })
 
-router.post('/store', upload.single('image'), productController.store)
+router.post('/store', [Authentication, Admin, upload.single('image')], productController.store)
+router.get('/search', productController.search)
+router.get('/search-bar-query', productController.searchBarQuery)
+router.delete('/:_id', [Authentication, Admin], productController.destroy)
+router.put('/', [Authentication, Admin, upload.single('image')], productController.update)
 
 export default router

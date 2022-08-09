@@ -1,14 +1,21 @@
 import mongoose, { Schema, Document, Model } from 'mongoose'
 
-enum Category {
+export enum Category {
     TSHIRTS = 'T-Shirts',
     ACCESORIES = 'Accessories',
+}
+
+export enum Gender {
+    MEN = 'Men',
+    WOMEN = 'Women',
+    UNISEX = 'Unisex',
 }
 
 export interface IProduct extends Document {
     title: String
     description: String
     category: Category
+    gender: Gender
     imageUrl: String
 }
 
@@ -21,6 +28,11 @@ const productSchema = new Schema<IProduct>({
     description: {
         type: String,
         required: true,
+    },
+    gender: {
+        type: String,
+        required: true,
+        enum: Object.values(Gender),
     },
     category: {
         type: String,

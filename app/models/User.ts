@@ -2,10 +2,15 @@ import mongoose, { Schema, Document, Model } from 'mongoose'
 import bcrypt from 'bcrypt'
 import { validate as emailValidator } from 'email-validator'
 
+enum Role {
+    ADMIN = 'Admin',
+    USER = 'User',
+}
 export interface IUser extends Document {
     login: string
     name: string
     email: string
+    role: Role
     username: string
     firstName: string
     lastName: string
@@ -37,6 +42,11 @@ const userSchema = new Schema<IUser>({
         required: true,
         validate: emailValidator,
         unique: true,
+    },
+    role: {
+        type: String,
+        default: Role.USER,
+        enum: Object.values(Role),
     },
     password: {
         type: String,
