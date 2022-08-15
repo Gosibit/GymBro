@@ -6,6 +6,7 @@ import productRoutes from './app/routes/productRoutes'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import User from './app/models/User'
+import cors from 'cors'
 
 const app = express()
 dotenv.config()
@@ -20,6 +21,7 @@ const dbURI = `mongodb+srv://${process.env.MONGODB_USER_LOGIN}:${process.env.MON
             console.log(req.url)
             next()
         })
+        app.use(cors())
         app.use('/public', express.static(__dirname + '/public'))
         app.use(bodyParser.json())
         app.use(bodyParser.urlencoded({ extended: true }))

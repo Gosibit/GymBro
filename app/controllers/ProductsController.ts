@@ -28,7 +28,6 @@ class ProductsController {
     public async search(req: express.Request, res: express.Response) {
         try {
             const { category = Object.values(Category), gender = Object.values(Gender) } = req.query //if some params not provided accept every possible value of this param
-            console.log(req.params)
             const products = await Product.find({ category, gender })
             return res.status(400).json(products)
         } catch (error) {
@@ -39,9 +38,9 @@ class ProductsController {
         try {
             const { title = '' } = req.query //if some params not provided accept every possible value of this param
             const products = await Product.find({
-                title: { $regex: title + '.*', $options: 'i' },
+                title: { $regex: '^' + title, $options: 'i' },
             }).limit(5)
-            return res.status(400).json(products)
+            return res.status(200).json(products)
         } catch (error) {
             return res.status(422).json('There was a problem with finding products')
         }
