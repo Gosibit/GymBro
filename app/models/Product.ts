@@ -14,9 +14,13 @@ export enum Gender {
 export interface IProduct extends Document {
     title: String
     description: String
-    category: Category
+    price: Number
     gender: Gender
-    imageUrl: String
+    category: Category
+    imageUrls: {
+        original: String
+        thumbnail: String
+    }
 }
 
 const productSchema = new Schema<IProduct>({
@@ -27,6 +31,11 @@ const productSchema = new Schema<IProduct>({
     },
     description: {
         type: String,
+        required: true,
+        min: 1,
+    },
+    price: {
+        type: Number,
         required: true,
     },
     gender: {
@@ -39,9 +48,15 @@ const productSchema = new Schema<IProduct>({
         required: true,
         enum: Object.values(Category),
     },
-    imageUrl: {
-        type: String,
-        match: new RegExp(/([/|.|\w|\s|-])*\.(?:jpg|png|jpeg)/),
+    imageUrls: {
+        original: {
+            type: String,
+            match: new RegExp(/([/|.|\w|\s|-])*\.(?:jpg|png|jpeg)/),
+        },
+        thumbnail: {
+            type: String,
+            match: new RegExp(/([/|.|\w|\s|-])*\.(?:jpg|png|jpeg)/),
+        },
     },
 })
 
