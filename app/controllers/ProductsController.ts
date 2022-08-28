@@ -49,7 +49,10 @@ class ProductsController {
                 gender = Object.values(Gender),
                 limit = 1000,
             }: any = req.query //if some params not provided accept every possible value of this param
-            const products = await Product.find({ category, gender }).limit(parseInt(limit))
+            const products = await Product.find({
+                category,
+                gender: gender.length === 3 ? gender : [gender, Gender.UNISEX],
+            }).limit(parseInt(limit))
             return res.status(200).json(products)
         } catch (error) {
             return res.status(422).json('There was a problem with finding products')
