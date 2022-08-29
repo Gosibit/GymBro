@@ -69,6 +69,16 @@ class ProductsController {
             return res.status(422).json('There was a problem with finding products')
         }
     }
+    public async show(req: express.Request, res: express.Response) {
+        try {
+            console.log(req.params._id)
+            const product = await Product.findById(req.params._id).orFail()
+            return res.status(200).json(product)
+        } catch (error) {
+            console.log(error)
+            return res.status(422).json('There was a problem with finding product')
+        }
+    }
     public async destroy(req: express.Request, res: express.Response) {
         try {
             if (!process.env.ADDRESS) throw Error('No env address')

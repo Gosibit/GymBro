@@ -24,5 +24,6 @@ router.get('/search', productController.search)
 router.get('/search-bar-query', productController.searchBarQuery)
 router.delete('/:_id', [Authentication, Admin], productController.destroy)
 router.put('/', [Authentication, Admin, upload.single('image')], productController.update)
+router.get('/:_id', productController.show)
 
 export default router
