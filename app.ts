@@ -5,10 +5,10 @@ import authRoutes from './app/routes/authRoutes'
 import productRoutes from './app/routes/productRoutes'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
-import User from './app/models/User'
 import cors from 'cors'
 
 const app = express()
+app.use(cors())
 dotenv.config()
 const port = process.env.PORT
 const dbURI = `mongodb+srv://${process.env.MONGODB_USER_LOGIN}:${process.env.MONGODB_USER_PASSWORD}@gymbro.ablfct2.mongodb.net/${process.env.DATABASE_NAME}?retryWrites=true&w=majority`
@@ -19,7 +19,6 @@ const dbURI = `mongodb+srv://${process.env.MONGODB_USER_LOGIN}:${process.env.MON
         app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
             next()
         })
-        app.use(cors())
         app.use('/public', express.static(__dirname + '/public'))
         app.use(bodyParser.json())
         app.use(bodyParser.urlencoded({ extended: true }))
