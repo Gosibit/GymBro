@@ -6,9 +6,11 @@ import productRoutes from './app/routes/productRoutes'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import cors from 'cors'
+import path = require('path')
 
 const app = express()
 app.use(cors())
+app.use('/public', express.static(path.join(__dirname, 'public')))
 
 dotenv.config()
 const port = process.env.PORT
