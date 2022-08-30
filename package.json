@@ -39,10 +39,8 @@
         "typescript": "^4.7.4"
     },
     "scripts": {
-        "format:check": "prettier --check .",
-        "format:write": "prettier --write .",
-        "lint:check": "eslint .",
-        "lint:fix": "eslint --fix .",
-        "server": "nodemon server.js"
+        "start": "node build/index.js",
+        "build": "tsc",
+        "postinstall": "npm run build"
     }
 }
