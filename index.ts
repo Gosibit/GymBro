@@ -1,8 +1,8 @@
 import dotenv = require('dotenv')
 import express from 'express'
-import userRoutes from './routes/userRoutes'
-import authRoutes from './routes/authRoutes'
-import productRoutes from './routes/productRoutes'
+import userRoutes from './app/routes/userRoutes'
+import authRoutes from './app/routes/authRoutes'
+import productRoutes from './app/routes/productRoutes'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import cors from 'cors'
@@ -13,7 +13,7 @@ app.use(cors())
 app.use('/public', express.static(path.join(__dirname, 'public')))
 
 dotenv.config()
-const port = process.env.PORT
+const port = process.env.PORT || 3000
 const dbURI = `mongodb+srv://${process.env.MONGODB_USER_LOGIN}:${process.env.MONGODB_USER_PASSWORD}@gymbro.ablfct2.mongodb.net/${process.env.DATABASE_NAME}?retryWrites=true&w=majority`
 ;(async () => {
     try {
