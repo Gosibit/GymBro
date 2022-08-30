@@ -1,5 +1,5 @@
 # 🏋️ GymBro REST API
---- 
+
 <img
 src="https://img.shields.io/badge/JavaScript-f7df1e?style=for-the-badge&logo=javascript&logoColor=000000">
 <img
