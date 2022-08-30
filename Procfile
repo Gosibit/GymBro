@@ -1,1 +1,1 @@
-web:nodemon/server.ts
+worker:npm start
