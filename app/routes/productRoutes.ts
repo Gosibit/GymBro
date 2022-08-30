@@ -1,7 +1,8 @@
 import express from 'express'
 import ProductsController from '../controllers/ProductsController'
 import multer from 'multer'
-import Authentication from '../middleware/Authenticate'
+import Authentication from '../middleware/authenticate'
+
 import Admin from '../middleware/Admin'
 
 const productController = new ProductsController()
