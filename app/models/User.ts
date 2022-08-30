@@ -24,7 +24,7 @@ const userSchema = new Schema<IUser>({
     login: {
         type: String,
         required: true,
-        //  unique: true,
+        unique: true,
         trim: true,
         minLength: 3,
         maxLength: 30,
@@ -32,7 +32,7 @@ const userSchema = new Schema<IUser>({
     username: {
         type: String,
         required: true,
-        //  unique: true,
+        unique: true,
         trim: true,
         minLength: 3,
         maxLength: 30,

@@ -23,7 +23,6 @@ class UsersController {
                 user: user.login,
             })
         } catch (error) {
-            console.log(error)
             return res.status(422).json({
                 message: 'There was an error while creating new user',
             })
@@ -45,7 +44,6 @@ class UsersController {
                 accessToken: accessToken,
             })
         } catch (error) {
-            console.log(error)
             return res.status(422).json({
                 message: 'There was an error while logging in',
             })

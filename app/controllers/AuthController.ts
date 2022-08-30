@@ -39,7 +39,6 @@ class AuthController {
             if (user && !user.confirmed) AuthController.sendVerifyEmail(user)
             return res.status(200).json({ message: 'Email sent if possible' })
         } catch (error) {
-            console.log(error)
             return res.status(200).json({ message: 'Email sent if possible' })
         }
     }
@@ -57,7 +56,6 @@ class AuthController {
                 message: 'Email verified!',
             })
         } catch (error) {
-            console.log(error)
             return res.status(422).json({
                 message: 'There was an error while veryfing email',
             })
@@ -107,7 +105,6 @@ class AuthController {
                 message: 'Email sent if user exists',
             })
         } catch (error) {
-            console.log(error)
             return res.status(200).json({
                 message: 'Email sent if user exists',
             })
@@ -125,7 +122,6 @@ class AuthController {
             await user.save()
             return res.status(200).json('Password changed successfully')
         } catch (error) {
-            console.log(error)
             return res.status(422).json({
                 message: 'Changing password failed',
             })

@@ -15,10 +15,8 @@ const dbURI = `mongodb+srv://${process.env.MONGODB_USER_LOGIN}:${process.env.MON
 ;(async () => {
     try {
         await mongoose.connect(dbURI, {})
-        // await User.deleteMany({})
         app.listen(port, () => console.log(`Listening on port ${port}`))
         app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-            console.log(req.url)
             next()
         })
         app.use(cors())
@@ -28,7 +26,5 @@ const dbURI = `mongodb+srv://${process.env.MONGODB_USER_LOGIN}:${process.env.MON
         app.use('/users', userRoutes)
         app.use('/auth/', authRoutes)
         app.use('/products/', productRoutes)
-    } catch (error) {
-        console.log(error)
-    }
+    } catch (error) {}
 })()

@@ -38,7 +38,6 @@ class ProductsController {
             fs.createWriteStream(thumbnailPath).write(thumbnailBuffer)
             return res.status(201).json({ product })
         } catch (error) {
-            console.log(error)
             return res.status(422).json('There was a problem with creating product')
         }
     }
@@ -71,11 +70,9 @@ class ProductsController {
     }
     public async show(req: express.Request, res: express.Response) {
         try {
-            console.log(req.params._id)
             const product = await Product.findById(req.params._id).orFail()
             return res.status(200).json(product)
         } catch (error) {
-            console.log(error)
             return res.status(422).json('There was a problem with finding product')
         }
     }
@@ -111,7 +108,6 @@ class ProductsController {
             }
             return res.status(200).json(product)
         } catch (error) {
-            console.log(error)
             return res.status(422).json('There was a problem with updating product')
         }
     }
