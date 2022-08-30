@@ -43,6 +43,7 @@
         "format:write": "prettier --write .",
         "lint:check": "eslint .",
         "lint:fix": "eslint --fix .",
-        "server": "nodemon server.js"
+        "server": "nodemon server.js",
+        "start": "nodemon app.ts"
     }
 }
