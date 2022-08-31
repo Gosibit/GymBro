@@ -18,8 +18,14 @@ export interface IProduct extends Document {
     gender: Gender
     category: Category
     imageUrls: {
-        original: String
-        thumbnail: String
+        original: {
+            publicId: String
+            url: String
+        }
+        thumbnail: {
+            publicId: String
+            url: String
+        }
     }
 }
 
@@ -50,12 +56,22 @@ const productSchema = new Schema<IProduct>({
     },
     imageUrls: {
         original: {
-            type: String,
-            match: new RegExp(/([/|.|\w|\s|-])*\.(?:jpg|png|jpeg)/),
+            publicId: {
+                type: String,
+            },
+            url: {
+                type: String,
+                match: new RegExp(/([/|.|\w|\s|-])*\.(?:jpg|png|jpeg)/),
+            },
         },
         thumbnail: {
-            type: String,
-            match: new RegExp(/([/|.|\w|\s|-])*\.(?:jpg|png|jpeg)/),
+            publicId: {
+                type: String,
+            },
+            url: {
+                type: String,
+                match: new RegExp(/([/|.|\w|\s|-])*\.(?:jpg|png|jpeg)/),
+            },
         },
     },
 })
