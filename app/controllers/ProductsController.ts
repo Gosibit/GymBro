@@ -38,6 +38,7 @@ class ProductsController {
             fs.createWriteStream(thumbnailPath).write(thumbnailBuffer)
             return res.status(201).json({ product })
         } catch (error) {
+            console.log(error)
             return res.status(422).json('There was a problem with creating product')
         }
     }
@@ -108,6 +109,7 @@ class ProductsController {
             }
             return res.status(200).json(product)
         } catch (error) {
+            console.log(error)
             return res.status(422).json('There was a problem with updating product')
         }
     }
