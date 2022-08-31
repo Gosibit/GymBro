@@ -13,12 +13,18 @@ async function uploadImage(image: Express.Multer.File) {
 
     return { originalUpload, thumbnailUpload }
 }
+
+function removeItem<T>(arr: Array<T>, value: T): Array<T> {
+    const index = arr.indexOf(value)
+    if (index > -1) {
+        arr.splice(index, 1)
+    }
+    return arr
+}
 class ProductsController {
     public async store(req: express.Request, res: express.Response) {
         try {
             if (!req.file) throw Error('no file')
-
-            const { originalUpload, thumbnailUpload } = await uploadImage(req.file)
 
             const { title, description, category, gender, price } = req.body
 
@@ -29,6 +35,7 @@ class ProductsController {
                 gender,
                 price,
             })
+            const { originalUpload, thumbnailUpload } = await uploadImage(req.file)
 
             product.imageUrls.original.publicId = originalUpload.public_id
             product.imageUrls.original.url = originalUpload.url
@@ -49,12 +56,14 @@ class ProductsController {
                 gender = Object.values(Gender),
                 limit = 1000,
             }: any = req.query //if some params not provided accept every possible value of this param
+            const isCategoryAnArray = Array.isArray(category)
             const products = await Product.find({
-                category,
-                gender: gender.length === 3 ? gender : [gender, Gender.UNISEX],
+                category: isCategoryAnArray ? removeItem(category, Category.ACCESORIES) : category, //we dont want to return accessories if somebody didnt specify it
+                gender: gender,
             }).limit(parseInt(limit))
             return res.status(200).json(products)
         } catch (error) {
+            console.log(error)
             return res.status(422).json('There was a problem with finding products')
         }
     }
@@ -91,16 +100,15 @@ class ProductsController {
     }
     public async update(req: express.Request, res: express.Response) {
         try {
-            const { title, description, category, gender } = req.body
+            const { title, description, category, gender, price } = req.body
             const product = await Product.findOneAndUpdate(
                 { _id: req.body._id },
-                { title, description, category, gender },
+                { title, description, category, gender, price },
                 { runValidators: true }
             ).orFail()
 
             if (req.file) {
                 if (!process.env.ADDRESS) throw Error('No env address')
-
                 const { originalUpload, thumbnailUpload } = await uploadImage(req.file)
 
                 await cloudinary.destroy(product.imageUrls.original.publicId)
@@ -111,11 +119,9 @@ class ProductsController {
 
                 product.imageUrls.thumbnail.publicId = thumbnailUpload.public_id
                 product.imageUrls.thumbnail.url = thumbnailUpload.url
-                await product.save()
             }
             return res.status(200).json(product)
         } catch (error) {
-            console.log(error)
             return res.status(422).json('There was a problem with updating product')
         }
     }
