@@ -13,6 +13,14 @@ async function uploadImage(image: Express.Multer.File) {
 
     return { originalUpload, thumbnailUpload }
 }
+
+function removeItem<T>(arr: Array<T>, value: T): Array<T> {
+    const index = arr.indexOf(value)
+    if (index > -1) {
+        arr.splice(index, 1)
+    }
+    return arr
+}
 class ProductsController {
     public async store(req: express.Request, res: express.Response) {
         try {
@@ -48,12 +56,14 @@ class ProductsController {
                 gender = Object.values(Gender),
                 limit = 1000,
             }: any = req.query //if some params not provided accept every possible value of this param
+            const isCategoryAnArray = Array.isArray(category)
             const products = await Product.find({
-                category,
-                gender: gender.length === 3 ? gender : [gender, Gender.UNISEX],
+                category: isCategoryAnArray ? removeItem(category, Category.ACCESORIES) : category, //we dont want to return accessories if somebody didnt specify it
+                gender: gender,
             }).limit(parseInt(limit))
             return res.status(200).json(products)
         } catch (error) {
+            console.log(error)
             return res.status(422).json('There was a problem with finding products')
         }
     }
