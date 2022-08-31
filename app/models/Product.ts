@@ -7,7 +7,7 @@ export enum Category {
 
 export enum Gender {
     MALE = 'M',
-    FEMALE = 'W',
+    FEMALE = 'F',
     UNISEX = 'U',
 }
 
