@@ -2,7 +2,7 @@ import express from 'express'
 import fs from 'fs'
 import Product, { Category, Gender } from '../models/Product'
 import sharp from 'sharp'
-
+import cloudinary from '../services/Cloudinary'
 class ProductsController {
     public async store(req: express.Request, res: express.Response) {
         try {
@@ -16,28 +16,22 @@ class ProductsController {
                 gender,
                 price,
             })
-            const originalPath =
-                '/public/product-photos/originals/' +
-                product._id +
-                '.' +
-                req.file.mimetype.split('/')[1]
-            const thumbnailPath =
-                '/public/product-photos/thumbnails/' +
-                product._id +
-                '.' +
-                req.file.mimetype.split('/')[1]
 
-            product.imageUrls = {
-                original: process.env.ADDRESS + originalPath,
-                thumbnail: process.env.ADDRESS + thumbnailPath,
-            }
-            await product.save()
+            const originalBuffer = req.file.buffer
             const thumbnailBuffer = await sharp(req.file.buffer).resize(80).toBuffer()
-            fs.createWriteStream(originalPath).write(req.file.buffer)
-            fs.createWriteStream(thumbnailPath).write(thumbnailBuffer)
+
+            const originalUpload: any = await cloudinary.upload(originalBuffer)
+            const thumbnailUpload: any = await cloudinary.upload(thumbnailBuffer)
+
+            product.imageUrls.original.publicId = originalUpload.public_id
+            product.imageUrls.original.url = originalUpload.url
+
+            product.imageUrls.thumbnail.publicId = thumbnailUpload.public_id
+            product.imageUrls.thumbnail.url = thumbnailUpload.url
+            await product.save()
+
             return res.status(201).json({ product })
         } catch (error) {
-            console.log(error)
             return res.status(422).json('There was a problem with creating product')
         }
     }
@@ -81,8 +75,8 @@ class ProductsController {
             if (!process.env.ADDRESS) throw Error('No env address')
             const product = await Product.findById(req.params._id).orFail()
             product.delete()
-            fs.unlink(product.imageUrls.original.replace(process.env.ADDRESS, '.'), () => {})
-            fs.unlink(product.imageUrls.thumbnail.replace(process.env.ADDRESS, '.'), () => {})
+            cloudinary.destroy(product.imageUrls.original.publicId)
+            cloudinary.destroy(product.imageUrls.thumbnail.publicId)
             return res.status(200).json('Product deleted successfully')
         } catch (error) {
             return res.status(422).json('There was a problem with deleting product')
@@ -99,11 +93,20 @@ class ProductsController {
 
             if (req.file) {
                 if (!process.env.ADDRESS) throw Error('No env address')
-                const originalPath = product.imageUrls.original.replace(process.env.ADDRESS, '.')
-                const thumbnailPath = product.imageUrls.thumbnail.replace(process.env.ADDRESS, '.')
-                const thumbnailBuffor = await sharp(req.file.buffer).resize(80, 100)
-                fs.createWriteStream(originalPath).write(req.file.buffer)
-                fs.createWriteStream(thumbnailPath).write(thumbnailBuffor)
+                const originalBuffer = req.file.buffer
+                const thumbnailBuffer = await sharp(req.file.buffer).resize(80).toBuffer()
+
+                const originalUpload: any = await cloudinary.upload(originalBuffer)
+                const thumbnailUpload: any = await cloudinary.upload(thumbnailBuffer)
+
+                await cloudinary.destroy(product.imageUrls.original.publicId)
+                await cloudinary.destroy(product.imageUrls.thumbnail.publicId)
+
+                product.imageUrls.original.publicId = originalUpload.public_id
+                product.imageUrls.original.url = originalUpload.url
+
+                product.imageUrls.thumbnail.publicId = thumbnailUpload.public_id
+                product.imageUrls.thumbnail.url = thumbnailUpload.url
                 await product.save()
             }
             return res.status(200).json(product)

@@ -10,7 +10,6 @@ import path = require('path')
 
 const app = express()
 app.use(cors())
-app.use('/public', express.static(path.join(__dirname, 'public')))
 
 dotenv.config()
 const port = process.env.PORT || 3000
