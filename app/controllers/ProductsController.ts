@@ -3,10 +3,23 @@ import fs from 'fs'
 import Product, { Category, Gender } from '../models/Product'
 import sharp from 'sharp'
 import cloudinary from '../services/Cloudinary'
+
+async function uploadImage(image: Express.Multer.File) {
+    const originalBuffer = image.buffer
+    const thumbnailBuffer = await sharp(image.buffer).resize(80).toBuffer()
+
+    const originalUpload: any = await cloudinary.upload(originalBuffer)
+    const thumbnailUpload: any = await cloudinary.upload(thumbnailBuffer)
+
+    return { originalUpload, thumbnailUpload }
+}
 class ProductsController {
     public async store(req: express.Request, res: express.Response) {
         try {
             if (!req.file) throw Error('no file')
+
+            const { originalUpload, thumbnailUpload } = await uploadImage(req.file)
+
             const { title, description, category, gender, price } = req.body
 
             const product = await Product.create({
@@ -16,12 +29,6 @@ class ProductsController {
                 gender,
                 price,
             })
-
-            const originalBuffer = req.file.buffer
-            const thumbnailBuffer = await sharp(req.file.buffer).resize(80).toBuffer()
-
-            const originalUpload: any = await cloudinary.upload(originalBuffer)
-            const thumbnailUpload: any = await cloudinary.upload(thumbnailBuffer)
 
             product.imageUrls.original.publicId = originalUpload.public_id
             product.imageUrls.original.url = originalUpload.url
@@ -93,11 +100,8 @@ class ProductsController {
 
             if (req.file) {
                 if (!process.env.ADDRESS) throw Error('No env address')
-                const originalBuffer = req.file.buffer
-                const thumbnailBuffer = await sharp(req.file.buffer).resize(80).toBuffer()
 
-                const originalUpload: any = await cloudinary.upload(originalBuffer)
-                const thumbnailUpload: any = await cloudinary.upload(thumbnailBuffer)
+                const { originalUpload, thumbnailUpload } = await uploadImage(req.file)
 
                 await cloudinary.destroy(product.imageUrls.original.publicId)
                 await cloudinary.destroy(product.imageUrls.thumbnail.publicId)
