@@ -22,7 +22,6 @@ const dbURI = `mongodb+srv://${process.env.MONGODB_USER_LOGIN}:${process.env.MON
         app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
             next()
         })
-        app.use('/public', express.static(__dirname + '/public'))
         app.use(bodyParser.json())
         app.use(bodyParser.urlencoded({ extended: true }))
         app.use('/users', userRoutes)

@@ -2,7 +2,6 @@ import express from 'express'
 import fs from 'fs'
 import Product, { Category, Gender } from '../models/Product'
 import sharp from 'sharp'
-import path from 'path'
 
 class ProductsController {
     public async store(req: express.Request, res: express.Response) {
@@ -18,19 +17,19 @@ class ProductsController {
                 price,
             })
             const originalPath =
-                './public/product-photos/originals/' +
+                '/public/product-photos/originals/' +
                 product._id +
                 '.' +
                 req.file.mimetype.split('/')[1]
             const thumbnailPath =
-                './public/product-photos/thumbnails/' +
+                '/public/product-photos/thumbnails/' +
                 product._id +
                 '.' +
                 req.file.mimetype.split('/')[1]
 
             product.imageUrls = {
-                original: process.env.ADDRESS + originalPath.replace('.', ''),
-                thumbnail: process.env.ADDRESS + thumbnailPath.replace('.', ''),
+                original: process.env.ADDRESS + originalPath,
+                thumbnail: process.env.ADDRESS + thumbnailPath,
             }
             await product.save()
             const thumbnailBuffer = await sharp(req.file.buffer).resize(80).toBuffer()
