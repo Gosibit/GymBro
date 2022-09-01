@@ -5,14 +5,11 @@ import express from 'express'
 class UsersController {
     public async register(req: express.Request, res: express.Response) {
         try {
-            const { login, username, email, password, firstName, lastName } = req.body
+            const { email, password } = req.body
+            console.log(email, password)
             const user = await User.create({
-                login,
-                username,
                 email,
                 password,
-                firstName,
-                lastName,
                 confirmed: false,
             })
 
@@ -20,7 +17,7 @@ class UsersController {
 
             return res.status(201).json({
                 message: 'User successfully created',
-                user: user.login,
+                user: user.email,
             })
         } catch (error) {
             return res.status(422).json({

@@ -7,13 +7,8 @@ enum Role {
     USER = 'User',
 }
 export interface IUser extends Document {
-    login: string
-    name: string
     email: string
     role: Role
-    username: string
-    firstName: string
-    lastName: string
     password: string
     confirmed: boolean
     passwordChangedDate: Number
@@ -21,22 +16,6 @@ export interface IUser extends Document {
 }
 
 const userSchema = new Schema<IUser>({
-    login: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-        minLength: 3,
-        maxLength: 30,
-    },
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-        minLength: 3,
-        maxLength: 30,
-    },
     email: {
         type: String,
         required: true,
@@ -63,25 +42,8 @@ const userSchema = new Schema<IUser>({
         type: Boolean,
         requried: true,
     },
-    firstName: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 3,
-        maxLength: 30,
-    },
-    lastName: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 3,
-        maxLength: 30,
-    },
 })
 userSchema.pre('save', async function (next) {
-    // capitalize first name and last name
-    this.firstName = this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1).toLowerCase()
-    this.lastName = this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1).toLowerCase()
     //encrypt password
     if (!this.isModified('password')) return next()
 
