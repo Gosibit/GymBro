@@ -20,6 +20,7 @@ class UsersController {
                 user: user.email,
             })
         } catch (error) {
+            console.log(error)
             return res.status(422).json({
                 message: 'There was an error while creating new user',
             })
@@ -27,8 +28,9 @@ class UsersController {
     }
     public async login(req: express.Request, res: express.Response) {
         try {
-            const user = await User.findOne({ login: req.body.login }).orFail()
-            const validate = await user.validatePassword(req.body.password)
+            const { email, password } = req.body
+            const user = await User.findOne({ email: email }).orFail()
+            const validate = await user.validatePassword(password)
             if (!validate) throw Error('Wrong password')
             if (!user.confirmed)
                 return res.status(401).json({
