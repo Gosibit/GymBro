@@ -6,7 +6,6 @@ class UsersController {
     public async register(req: express.Request, res: express.Response) {
         try {
             const { email, password } = req.body
-            console.log(email, password)
             const user = await User.create({
                 email,
                 password,
