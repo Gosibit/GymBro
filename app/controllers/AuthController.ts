@@ -52,7 +52,7 @@ class AuthController {
 
             user.confirmed = true
             await user.save()
-            return res.redirect(`${process.env.FRONTEND_ADDRESS}/email-confirmed`)
+            return res.redirect(`${process.env.FE_ADDRESS}/email-confirmed`)
         } catch (error) {
             return res.status(422).json({
                 message: 'There was an error while veryfing email',
