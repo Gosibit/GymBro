@@ -21,6 +21,7 @@ const userSchema = new Schema<IUser>({
         required: true,
         validate: emailValidator,
         unique: true,
+        caseSensitive: false,
     },
     role: {
         type: String,
