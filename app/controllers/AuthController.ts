@@ -52,9 +52,7 @@ class AuthController {
 
             user.confirmed = true
             await user.save()
-            return res.status(200).json({
-                message: 'Email verified!',
-            })
+            return res.redirect(`${process.env.FE_ADDRESS}/email-confirmed`)
         } catch (error) {
             return res.status(422).json({
                 message: 'There was an error while veryfing email',
@@ -92,7 +90,7 @@ class AuthController {
                 CHANGE_PASSWORD_SECRET,
                 { expiresIn: '1d' },
                 async (err, changePasswordToken) => {
-                    const url = `${ADDRESS}/auth/change-password/${changePasswordToken}` //its gonna be FE address
+                    const url = `${ADDRESS}/change-password/${changePasswordToken}` //its gonna be FE address
                     transporter.sendMail({
                         to: user.email,
                         from: `GymBro <${EMAIL_USERNAME}>`,
@@ -120,10 +118,10 @@ class AuthController {
             user.password = req.body.password
             user.passwordChangedDate = Date.now()
             await user.save()
-            return res.status(200).json('Password changed successfully')
+            return res.status(200).send('Password changed successfully')
         } catch (error) {
             return res.status(422).json({
-                message: 'Changing password failed',
+                message: 'There was a problem with changing password',
             })
         }
     }

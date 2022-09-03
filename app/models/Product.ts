@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose'
 export enum Category {
     TSHIRTS = 'T-Shirts',
     ACCESORIES = 'Accessories',
+    SHORTS = 'Shorts',
 }
 
 export enum Gender {
