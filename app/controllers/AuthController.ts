@@ -72,8 +72,13 @@ class AuthController {
             if (!req.body.email) throw Error()
 
             const user = await User.findOne({ email: req.body.email }).orFail()
-            const { EMAIL_HOST, EMAIL_USERNAME, EMAIL_PASSWORD, CHANGE_PASSWORD_SECRET, ADDRESS } =
-                process.env
+            const {
+                EMAIL_HOST,
+                EMAIL_USERNAME,
+                EMAIL_PASSWORD,
+                CHANGE_PASSWORD_SECRET,
+                FE_ADDRESS,
+            } = process.env
             if (!CHANGE_PASSWORD_SECRET) throw Error('NO CHANGE PASSWORD SECRET')
 
             let transporter = nodemailer.createTransport({
@@ -90,7 +95,7 @@ class AuthController {
                 CHANGE_PASSWORD_SECRET,
                 { expiresIn: '1d' },
                 async (err, changePasswordToken) => {
-                    const url = `${ADDRESS}/change-password/${changePasswordToken}` //its gonna be FE address
+                    const url = `${FE_ADDRESS}/change-password/${changePasswordToken}` //its gonna be FE address
                     transporter.sendMail({
                         to: user.email,
                         from: `GymBro <${EMAIL_USERNAME}>`,
