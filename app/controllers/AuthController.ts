@@ -16,7 +16,6 @@ class AuthController {
                 pass: EMAIL_PASSWORD,
             },
         })
-
         return jwt.sign(
             { id: user._id },
             EMAIL_SECRET,
