@@ -2,11 +2,7 @@ import express from 'express'
 import jwt from 'jsonwebtoken'
 import User, { IUser } from '../models/User'
 
-const Authenticate = function (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-) {
+const Auth = function (req: express.Request, res: express.Response, next: express.NextFunction) {
     if (!process.env.ACCESS_TOKEN_SECRET) throw Error('NO ACCESS TOKEN SECRET')
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
@@ -21,4 +17,4 @@ const Authenticate = function (
     })
 }
 
-export default Authenticate
+export default Auth
