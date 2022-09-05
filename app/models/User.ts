@@ -53,7 +53,7 @@ userSchema.pre('save', async function (next) {
     return next()
 })
 userSchema.method('validatePassword', async function validatePassword(password: string) {
-    const user: IUser = await User.findOne({ login: this.login }).select('password').orFail()
+    const user: IUser = await User.findOne({ email: this.email }).select('password').orFail()
     return bcrypt.compare(password, user.password)
 })
 

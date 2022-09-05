@@ -47,5 +47,18 @@ class UsersController {
             })
         }
     }
+    public async me(req: express.Request, res: express.Response) {
+        try {
+            const user = await User.findById(req.user._id).orFail()
+            return res.status(200).json({
+                message: 'User successfully found',
+                user: user,
+            })
+        } catch (error) {
+            return res.status(422).json({
+                message: 'There was an error while finding user',
+            })
+        }
+    }
 }
 export default UsersController
