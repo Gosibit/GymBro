@@ -20,13 +20,9 @@ class ShoppingCartsController {
             let cart: IShoppingCart
 
             if (req.user) {
-                cart = await ShoppingCart.findOne({ user: req.user._id })
-                    .populate('products.product')
-                    .orFail()
+                cart = await cartQuery({ user: req.user._id })
             } else {
-                cart = await ShoppingCart.findOne({ user: req.user._id })
-                    .populate('product')
-                    .orFail()
+                cart = await cartQuery({ _id: req.params.shoppingCartId })
             }
 
             const total = cart.products.reduce((acc, SCproduct) => {
@@ -65,7 +61,9 @@ class ShoppingCartsController {
             }
 
             await cart.save()
-            return res.status(200).json(cart)
+            const populatedCart = await cartQuery({ _id: cart._id })
+
+            return res.status(200).json(populatedCart)
         } catch (error) {
             console.log(error)
             return res.status(422).json({ message: 'There was an error while adding to cart' })
@@ -114,7 +112,8 @@ class ShoppingCartsController {
                 : (cart.products[productIndex].quantity = quantity) //if quantity is more than 0, update quantity
 
             await cart.save()
-            return res.status(200).json(cart)
+            const populatedCart = await cartQuery({ _id: cart._id })
+            return res.status(200).json(populatedCart)
         } catch (error) {
             return res.status(422).json({ message: 'There was an error while updating cart' })
         }
