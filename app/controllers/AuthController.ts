@@ -45,8 +45,10 @@ class AuthController {
     public async resendVerifyEmail(req: express.Request, res: express.Response) {
         try {
             if (!req.body.email) throw Error()
+
             const user = await User.findOne({ email: req.body.email }).orFail()
             if (user && !user.confirmed) AuthController.sendVerifyEmail(user)
+
             return res.status(200).json({ message: 'Email sent if possible' })
         } catch (error) {
             return res.status(200).json({ message: 'Email sent if possible' })
