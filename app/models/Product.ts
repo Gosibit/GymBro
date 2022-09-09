@@ -15,7 +15,7 @@ export enum Gender {
 export interface IProduct extends Document {
     title: String
     description: String
-    price: Number
+    price: number
     gender: Gender
     category: Category
     imageUrls: {
@@ -76,7 +76,6 @@ const productSchema = new Schema<IProduct>({
         },
     },
 })
-
 const Product = mongoose.model<IProduct>('Product', productSchema)
 
 export default Product

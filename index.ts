@@ -3,6 +3,7 @@ import express from 'express'
 import userRoutes from './app/routes/userRoutes'
 import authRoutes from './app/routes/authRoutes'
 import productRoutes from './app/routes/productRoutes'
+import shoppingCartRoutes from './app/routes/shoppingCartRoutes'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import cors from 'cors'
@@ -26,5 +27,6 @@ const dbURI = `mongodb+srv://${process.env.MONGODB_USER_LOGIN}:${process.env.MON
         app.use('/users', userRoutes)
         app.use('/auth/', authRoutes)
         app.use('/products/', productRoutes)
+        app.use('/shopping-carts/', shoppingCartRoutes)
     } catch (error) {}
 })()

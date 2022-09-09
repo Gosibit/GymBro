@@ -1,12 +1,12 @@
 import express from 'express'
 import UsersController from '../controllers/UsersController'
-import Authentication from '../middleware/authenticate'
+import Auth from '../middleware/Auth'
 
 const usersController = new UsersController()
 const router = express.Router()
 
 router.post('/register', usersController.register)
 router.post('/login', usersController.login)
-router.get('/me', Authentication, usersController.me)
+router.get('/me', Auth, usersController.me)
 
 export default router
