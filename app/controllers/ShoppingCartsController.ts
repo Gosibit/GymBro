@@ -1,6 +1,7 @@
 import express from 'express'
 import ShoppingCart, { IShoppingCart } from '../models/ShoppingCart'
 import { ObjectId } from 'mongodb'
+import Stripe, {PaymentMethods,Deliveries, getDelivery} from '../services/Stripe'
 
 async function cartQuery(param: any) {
     return await ShoppingCart.findOne(param).populate('products.product').orFail()
@@ -11,6 +12,11 @@ function findProductIndex(cart: IShoppingCart, productId: string, size: string) 
         (SCproduct) => SCproduct.product._id.toString() === productId && SCproduct.size === size
     )
 }
+
+function validatePaymentMethod (paymentMethod: string) {
+    return Object.values(PaymentMethods).includes(paymentMethod as PaymentMethods)
+}
+
 class ShoppingCartsController {
     public async getCart(req: express.Request, res: express.Response) {
         try {
@@ -60,7 +66,7 @@ class ShoppingCartsController {
             const populatedCart = await cartQuery({ _id: cart._id })
 
             await populatedCart.save()
-            
+
             return res.status(200).json(populatedCart)
         } catch (error) {
             console.log(error)
@@ -116,6 +122,34 @@ class ShoppingCartsController {
             return res.status(422).json({ message: 'There was an error while updating cart' })
         }
     }
+    public async checkout(req: express.Request, res: express.Response) {
+    
+        try {
+            const { shoppingCartId, paymentMethod, deliveryMethod } = req.body
+
+            if (!shoppingCartId && !req.user) throw Error('No shopping cart id')
+            if(!validatePaymentMethod(paymentMethod)) throw Error('Invalid payment method')
+            
+            const delivery = getDelivery(deliveryMethod)
+            
+            let cart: IShoppingCart
+            
+            if (req.user) cart = await cartQuery({ user: req.user._id })
+            else cart = await cartQuery({ _id: req.body.shoppingCartId })
+            
+            if(cart.products.length === 0) throw Error('Cart is empty')
+
+            const stripe = new Stripe()
+
+            const session = await stripe.createCheckoutSession(cart,paymentMethod,delivery)
+
+            return res.status(200).json({ url: session.url })
+        } catch (error) {
+            console.log(error)
+            return res.status(422).json({ message: 'There was an error while creating checkout session' })
+        }
+    }
 }
+    
 
 export default ShoppingCartsController

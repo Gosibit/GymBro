@@ -53,9 +53,7 @@ const ShoppingCartSchema = new Schema<IShoppingCart>(
             },
         ],
     },
-    { timestamps: true }
 )
-ShoppingCartSchema.index({ createdOn: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 10 }) //10 days
 
 ShoppingCartSchema.pre('save', async function (next) {
     this.total = this.products.reduce((acc, product) => acc + product.product.price * product.quantity, 0).toFixed(2)
