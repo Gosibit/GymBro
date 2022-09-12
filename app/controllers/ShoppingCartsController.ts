@@ -143,7 +143,10 @@ class ShoppingCartsController {
 
             const session = await stripe.createCheckoutSession(cart,paymentMethod,delivery)
 
-            return res.status(200).json({ url: session.url })
+            cart.products = []
+            await cart.save()
+            
+            return res.status(200).json({ url: session.url,shoppingCart: cart })
         } catch (error) {
             console.log(error)
             return res.status(422).json({ message: 'There was an error while creating checkout session' })
